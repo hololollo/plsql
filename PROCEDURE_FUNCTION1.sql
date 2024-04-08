@@ -1,3 +1,33 @@
+-- PL(Procedural Language)의 SQL ⇒ PL/SQL 
+-- SQL 구문을 하나의 명력 블록으로 구성하여 필요시 호출하여 사용하며, 
+-- IF, LOOP, FOR 등을 활용하여 더 효과적으로 SQL을 활용할 수 있다.
+-- 프로시저(Procedure), 함수(Function), 트리거(Trigger)는 선언(DECLARE)부터 해야한다. 임의의 테이블값
+
+/*
+ 프로시저 문법
+ CREATE OR REPLACE PROCEDURE 프로시저 이름( 매개변수명1[ IN | OUT | IN OUT ] 데이터타입[:= 디폴트값],
+      매개변수명2[ IN | OUT | IN OUT ] 데이터타입[:= 디폴트값], ... )
+  IS[AS]
+      변수, 상수 등 선언
+  BEGIN
+      실행
+  [EXCEPTION 예외처리부]
+  END [프로시저 이름]
+
+
+ 함수 문법
+    CREATE OR REPLACE FUNCTION 함수 이름 (매개변수1, 매개변수2....)
+    RETURN 데이터 타입;
+    IS[AS]
+        변수, 상수 선언..
+    BEGIN
+        실행부
+        RETURN 반환값
+        [EXCEPTION 예외처리부]
+    END [함수 이름];
+*/
+
+
 -- 사원(emp) 테이블 작성
 -- 사원번호(eno) 숫자 최대 10자리 , 사원명(ename)가변문자 20자, 부서코드(pno) 숫자 최대 2자리, 직급(pos) 가변문자 10자, 
 -- 우편번호(pcode) 가변문자 7자, 주소(addr) 가변문자 100자, 급여(salery) 숫자 8자, 보너스(bonus) 숫자 8자리, 입사일(regdate) 날짜, 성별(gender) 숫자 최대 2자리
@@ -49,7 +79,7 @@ select * from emp1;
 -- PL(Procedural Language)의 SQL ⇒ PL/SQL 
 -- SQL 구문을 하나의 명력 블록으로 구성하여 필요시 호출하여 사용하며, 
 -- IF, LOOP, FOR 등을 활용하여 더 효과적으로 SQL을 활용할 수 있다.
--- 프로시저(Procedure), 함수(Function), 트리거(Trigger)는 선언(DECLARE)부터 해야한다.
+-- 프로시저(Procedure), 함수(Function), 트리거(Trigger)는 선언(DECLARE)부터 해야한다. 임의의 테이블값
 
 -- PL 실행 결과 출력문 활성화
 SET SERVEROUTPUT ON;
@@ -63,7 +93,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE(cus1.a || '   ' || cus1.b || '   ' || cus1.c);
     DBMS_OUTPUT.PUT_LINE('현재 계정 : ' || USER);
     DBMS_OUTPUT.PUT_LINE('현재 질의 시간 : ' || TO_CHAR(SYSDATE, 'YYYY-DD-MM HH:MM:SS'));
-END;
+END; -- 익명의 값을 불러오는 DECLARE문을 활용하면 바로 실행되기 때문에 프로시저처럼 EXEC같은 실행문을 따로 실행시킬 필요가 없다.
 
 -- 익명의 프로시저를 활용하여 사원(emp) 테이블로부터 사원번호 2002인 직원의 사원번호, 사원명, 직급, 주소, 입사일을 출력하시오.
 -- 단, 입사일은 연도 네자리-월 두자리-일 두자리 형태로 출력될 수 있도록 할 것.
@@ -82,11 +112,11 @@ END;
 
 -- 익명의 반복 프로시저 실습(INDEX BY)
 DECLARE
-    TYPE ename_type IS TABLE OF emp1.ename%TYPE INDEX BY BINARY_INTEGER;
+    TYPE ename_type IS TABLE OF emp1.ename%TYPE INDEX BY BINARY_INTEGER; -- emp1테이블의 ename열과 같은 유형을 같는 ename_type이라는 사용자 정의 타입을 (배열 0부터 INTEGER로서)선언
     TYPE pos_type IS TABLE OF emp1.pos%TYPE INDEX BY BINARY_INTEGER;
-    ename_column ename_type;
+    ename_column ename_type; -- ename_type의 인스턴스인 ename_column을 선언. (emp1 테이블의 ename 열의 데이터를 저장할 변수)
     pos_column pos_type;
-    i BINARY_INTEGER := 0;
+    i BINARY_INTEGER := 0; -- i를 0으로 선언
 BEGIN
     FOR k IN(SELECT ename, pos FROM emp1) LOOP
         i := i + 1;
@@ -96,8 +126,8 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('****************');
     DBMS_OUTPUT.PUT_LINE('사원명 직급');
     DBMS_OUTPUT.PUT_LINE('****************');
-    FOR J IN 1..i LOOP
-        DBMS_OUTPUT.PUT_LINE(RPAD(ename_column(j), 12) || RPAD(pos_column(j),10));
+    FOR J IN 1..i LOOP -- j를 1부터 i까지 반복
+        DBMS_OUTPUT.PUT_LINE(RPAD(ename_column(j), 12) || RPAD(pos_column(j),10)); -- RPAD : 글자 수 맞추기 함수 => 즉, ename_column(j), 12 라는 의미는 오른쪽부터 빈칸을 포함하여 12글자를 맞춘것(너비).
     END LOOP;
 END;
 
@@ -205,14 +235,25 @@ BEGIN
 END tot_emp;
 /
 
--- 사원을 추가하는 프로시저 (ins_emp)를 작성하시오.
---(단, 추가하는 데이터는 임의로 할 것)
-CREATE OR REPLACE PROCEDURE ins_emp (v_eno IN emp
-IS    
+-- 사원을 추가하는 프로시저(ins_emp)를 작성하시오.
+-- (단, 추가하는 데이터는 임의로 할 것.)
+CREATE OR REPLACE PROCEDURE ins_emp1(veno IN emp1.eno%TYPE,
+vename IN emp1.ename%TYPE, vpno IN emp1.pno%TYPE,
+vpos IN emp1.pos%TYPE, vpcode IN emp1.pcode%TYPE,
+vaddr IN emp1.addr%TYPE, vtel IN emp1.tel%TYPE,
+vsalary IN emp1.salary%TYPE, vbonus IN emp1.bonus%TYPE,
+vregdate IN emp1.regdate%TYPE, vgender IN emp1.gender%TYPE,
+vsuperior IN emp1.superior%TYPE)
+IS
 BEGIN
-    SELECT INTO emp1 VALUES(v_eno, v_ename, v_pno, v_pcode, v_addr, v_tel, v_salary, )
-    FROM emp1 WHERE pos=v_pos
-EXEC ins_emp1(
+    INSERT INTO emp1 VALUES(veno,vename,vpno,vpos,vpcode,vaddr,vtel,vsalary,vbonus,
+    vregdate,vgender,vsuperior);
+    COMMIT;
+END;
+EXEC ins_emp1(2011,'김다연',30,'사원','223-245','동두천시','031-457-1405',2350000,null,'2023-12-26',2,2005);
+EXEC ins_emp1(2012,'히카루',40,'사원','123-125','서울시 구로구','02-2454-6903',2320000,null,'2024-01-10',1,2007);
+EXEC ins_emp1(2013,'서영은',40,'사원','127-113','서울시 금천구','02-8654-2728',2320000,null,'2024-01-10',2,2006);
+select * from emp1;
 
 -- 사원번호(eno)를 매개변수로 입력받아 해당 직원에 대한 퇴사처리를 하는 프로시저(del_emp)를 작성하시오.
 -- (단, del_emp 프로시저에서 매개값으로 사원번호가 2001인 사원을 진행할 것) 

@@ -12,6 +12,7 @@
 
 -- 원의 반지름을 입력받아 원주율(3.1415) 를 반영하여 넓이를 구하는 함수(circle_fnc)를 작성하시오.
 -- ex) NUMBER(10,2) => 정수 8자리이고 소숫점이하 2자리 표현 (총10자리숫자 중 00000000.00)
+-- DECLARE 생략
 CREATE OR REPLACE FUNCTION circle_fnc(radius IN NUMBER)
 RETURN NUMBER
 IS 
