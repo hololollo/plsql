@@ -12,6 +12,9 @@ create table release(pno number, amount number, price number);
 --재고테이블
 create table inventory(pno number, amount number, price number);
 drop table inventory;
+drop table goods;
+drop table store;
+drop table release;
 --데이터 추가
 -- 상품 등록
 insert into goods values(100, '먹태깡', 2500);
@@ -21,6 +24,7 @@ insert into goods values(400, '팅쵹', 2800);
 insert into goods values(500, '감튀', 2600);
 
 select * from goods;
+select * from store;
 
 select * from inventory;
 
@@ -49,9 +53,9 @@ END;
 
 select * from inventory;
 -- 입고 처리
-INSERT INTO store VALUES(100,2,2500);
+INSERT INTO store VALUES(100,500,2500);
 -- 재고 처리 : store_trigger에 의해 자동 처리됨
-INSERT INTO inventory VALUES(100,2,3500);   
+INSERT INTO inventory VALUES(100,1000,3500);   
 COMMIT;
 INSERT INTO store VALUES(100,3,2500);
 INSERT INTO store VALUES(200,4,2000);
@@ -75,7 +79,7 @@ END;
 /
 
 select * from inventory;
-INSERT INTO release VALUES(100,3,(SELECT price FROM inventory WHERE pno=100));
+INSERT INTO release VALUES(100,100,(SELECT price FROM inventory WHERE pno=100));
 
 
 
@@ -99,8 +103,9 @@ BEGIN
     END IF;
 END;
 /
+select * from store;
 select * from inventory;
-UPDATE store SET amount=amount-2 WHERE pno=100;
+UPDATE store SET amount=amount-100 WHERE pno=100;
 
 
 
@@ -120,13 +125,14 @@ BEGIN
     IF (vcnt=0) THEN -- 재고가 없다면
         INSERT INTO inventory values (:NEW.pno, :NEW.amount,:NEW.price);
     ELSE -- 재고가 있다면
-        UPDATE inventory SET amount=amount+:NEW.amount, price=:NEW.price*1.4 
+        UPDATE inventory SET amount=amount+:NEW.amount
         WHERE pno=:NEW.pno;
     END IF;
 END;
 /
-
-UPDATE release SET amount=amount-2 WHERE pno=100;
+select * from release;
+select * from inventory;
+UPDATE release SET amount=amount-10 WHERE pno=100;
 
 ----------------------------------------------------------------
 
@@ -205,7 +211,10 @@ END;
 select * from inventory;
 UPDATE store SET amount=amount-2 WHERE pno=100;
 
-
+drop trigger return_trigger;
+drop trigger recall_trigger;
+drop trigger release_trigger;
+drop trigger store_trigger;
 
 -- 반품(return)시의 재고 처리 : 출고(release) 테이블에 수량이 감소하면, 재고는 증가된다.
 -- 만약, 현재 해당 상품의 재고가 없으면, 새로운 상품으로 재고를 처리하고,
@@ -226,6 +235,7 @@ BEGIN
     END IF;    
 END;
 /
-
+insert into release values(100, 10, 3500); 
+select * from release;
 select * from inventory;
 UPDATE release SET amount=amount-2 WHERE pno=100;
