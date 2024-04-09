@@ -110,7 +110,7 @@ BEGIN
 END;
 
 
--- 익명의 반복 프로시저 실습(INDEX BY)
+-- 익명의 반복 프로시저 실습(INDEX BY) => 레코드
 DECLARE
     TYPE ename_type IS TABLE OF emp1.ename%TYPE INDEX BY BINARY_INTEGER; -- emp1테이블의 ename열과 같은 유형을 같는 ename_type이라는 사용자 정의 타입을 (배열 0부터 INTEGER로서)선언
     TYPE pos_type IS TABLE OF emp1.pos%TYPE INDEX BY BINARY_INTEGER;

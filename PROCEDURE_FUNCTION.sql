@@ -124,7 +124,7 @@ BEGIN
         vcnt := vcnt + 1;
         EXIT WHEN vcnt > 20;
     END LOOP;
-    DBMS_OUTPUT.PUT_LINE((vcnt-1) || '건 데이터 입력 완료');
+    DBMS_OUTPUT.PUT_LINE((vcnt-1) || '건 데이터 입력 완료'); -- 왜냐하면 21에서 종료가 되어 반복문을 빠져나오기 때문. 우리가 구할 것은 20개의 레코드를 추가하는 것 이므로.
 END;
 commit;
 -- / 안쓰는 이유 : 익명의 값이기 때문에. commit이 필요한 이유.
@@ -188,3 +188,7 @@ EXCEPTION
         DBMS_OUTPUT.PUT_LINE('기타 오류로 인해 정상처리 되지 못했습니다.');
 END;
 /
+
+
+
+
