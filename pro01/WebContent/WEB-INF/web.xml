@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
+  <display-name>pro01</display-name>
+<!--   <welcome-file-list> 첫 페이지 화면은 무조건 index로 가게끔 되어있다.
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.htm</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>default.html</welcome-file>
+    <welcome-file>default.htm</welcome-file>
+    <welcome-file>default.jsp</welcome-file>
+  </welcome-file-list> -->
+  <servlet>
+  	<servlet-name>pro01</servlet-name>
+  	<servlet-class>org.gangreung.ctrl.Main</servlet-class> <!-- 패키지.클래스 -->
+  </servlet>
+  <servlet-mapping> <!-- 주소 -->
+  	<servlet-name>pro01</servlet-name>
+  	<url-pattern>/</url-pattern> <!-- 서버의 루트 ex) http://127.0.1:8091 -->
+  </servlet-mapping>
+    <servlet-mapping>
+  	<servlet-name>default</servlet-name>
+  	<url-pattern>*.js</url-pattern>
+  	<url-pattern>*.css</url-pattern>
+  	<url-pattern>*.jpg</url-pattern>  	
+  	<url-pattern>*.png</url-pattern>  	
+  	<url-pattern>*.gif</url-pattern>  	
+  	<url-pattern>*.webp</url-pattern>  	
+  	<url-pattern>*.mp4</url-pattern>  	
+  	<url-pattern>*.ogv</url-pattern>  	
+  	<url-pattern>*.webm</url-pattern>  	
+  	<url-pattern>*.mp3</url-pattern>  	
+  	<url-pattern>*.wav</url-pattern>  	
+  	<url-pattern>*.ogg</url-pattern>  	
+  </servlet-mapping>
+  <filter> <!-- 한글이 깨진다면. -->
+  	<filter-name>SetCharEncoding</filter-name>
+  	<filter-class>org.apache.catalina.filters.SetCharacterEncodingFilter</filter-class>
+  	<init-param> <!-- 기본값 -->
+  		<param-name>encoding</param-name> <!-- jsp파일에서 ${encoding }하면 value값 나옴. -->
+  		<param-value>utf-8</param-value>
+  	</init-param>
+  </filter>
+  <filter-mapping>
+  	<filter-name>SetCharEncoding</filter-name>
+  	<url-pattern>/*</url-pattern> <!-- 루트페이지 부터 하위까지 다 -->
+  </filter-mapping>
+
+  
+</web-app>
